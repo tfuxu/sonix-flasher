@@ -29,13 +29,11 @@ jobs:
       run: |
         source venv/bin/activate
         pyinstaller sonix-flasher.spec
-        cd dist
-        tar cfJ flasher-linux.tar.xz "sonix-flasher"
 
     - uses: actions/upload-artifact@v1
       with:
         name: flasher-linux
-        path: dist/flasher-linux.tar.xz
+        path: dist/sonix-flasher/*
 
   build-mac:
     runs-on: macos-10.15
@@ -57,7 +55,7 @@ jobs:
       run: |
         source venv/bin/activate
         pyinstaller sonix-flasher.spec
-        hdiutil create -volname "sonix-flasher" -srcfolder "dist/sonix-flasher.app" -ov -format UDZO flasher-mac.dmg
+        hdiutil create -volname "sonix-flasher" -srcfolder "dist/sonix-flasher/sonix-flasher.app" -ov -format UDZO flasher-mac.dmg
 
     - uses: actions/upload-artifact@v1
       with:
@@ -83,9 +81,8 @@ jobs:
       run: |
         . .\venv\Scripts\activate.ps1
         pyinstaller sonix-flasher.spec
-        Compress-Archive -Path "dist\sonix-flasher" -DestinationPath flasher-win.zip
 
     - uses: actions/upload-artifact@v1
       with:
         name: flasher-win
-        path: flasher-win.zip
+        path: dist/sonix-flasher/*
