@@ -56,8 +56,7 @@ jobs:
     - name: Build
       run: |
         source venv/bin/activate
-        pyinstaller sonix-flasher.spec
-        ls dist/sonix-flasher
+        pyinstaller --windowed sonix-flasher.spec
         hdiutil create -volname "sonix-flasher" -srcfolder "dist/sonix-flasher/sonix-flasher.app" -ov -format UDZO flasher-mac.dmg
 
     - uses: actions/upload-artifact@v1
