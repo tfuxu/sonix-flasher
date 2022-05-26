@@ -1,4 +1,6 @@
-# Sonix Flasher
+# Sonix Flasher 
+[![CI](https://github.com/SonixQMK/sonix-flasher/actions/workflows/main.yml/badge.svg)](https://github.com/SonixQMK/sonix-flasher/actions/workflows/main.yml)
+
 A simple multi-platform utility for flashing QMK firmware into SONiX microcontrolers.
 
 ## Usage
@@ -19,14 +21,20 @@ Put your keyboard in bootloader mode, set the correct qmk offset (which should b
 ## Compiling
 ### Requirements
 * Python >= 3.7
+* qt5-base
 * libusb and libudev (only in Linux)
 
-### Linux and Mac OS
+### Linux
 
+Run a following command on Debian-based systems to install needed development packages:
+```
+sudo apt install qtbase5-dev libxcomposite-dev libxkbcommon-x11-dev libusb-1.0-0-dev libudev-dev
+```
+
+Open terminal and type:
 ```sh
 python3 -m venv venv
 source venv/bin/activate
-pip install cython # only on Mac OS
 pip install wheel
 pip install -r requirements.txt
 pyinstaller sonix-flasher.spec
@@ -34,9 +42,6 @@ pyinstaller sonix-flasher.spec
 
 To run an application you need to type in Linux:
 `./dist/sonix-flasher/sonix-flasher`
-
-And in Mac OS:
-`open -n ./dist/sonix-flasher/sonix-flasher.app`
 
 **[NOTE]** To run it for immediate use, just run `run.sh` and it'll set itself up and run. (only for Linux)
 
@@ -48,6 +53,21 @@ Alternatively, if you're running NixOS or have Nix installed, you can run:
 nix shell
 fbs run
 ```
+
+### Mac OS
+
+Open terminal and type:
+```sh
+python -m venv venv
+source venv/bin/activate
+pip install cython
+pip install wheel
+pip install -r requirements.txt
+pyinstaller --onefile -n "sonix-flasher" --windowed src/sonix-flasher/main.py
+```
+
+To run an application, type this in terminal:
+`open -n ./dist/sonix-flasher/sonix-flasher.app`
 
 ### Windows
 
@@ -74,7 +94,7 @@ Change `ATTR{idVendor}` and `ATTR{idProduct}` to values valid for your keyboard 
 
 ## Troubleshooting
 ### Keyboard isn't showing in device list
-Firstly check if your keyboard is plugged in properly.
+Before doing anything, check if your keyboard is plugged in properly.
 
 If you are on Windows, download [Zadig](https://zadig.akeo.ie/) to get VID and PID (first value in USB ID is VID and the second is PID). 
 
@@ -90,4 +110,7 @@ qt.qpa.xcb: could not connect to display :0
 qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
 ```
 
-This means you are probably trying to run application with sudo on Wayland session. Wayland doesn't support running applications with sudo because of security reasons. You should refer to [Running with sudo](#running-with-sudo) section, or check [here](https://wiki.archlinux.org/title/Running_GUI_applications_as_root#Wayland) for a workaround.
+This means that you are probably trying to run application with sudo on (X)Wayland session. (X)Wayland doesn't support running applications with sudo because of security reasons. You should refer to [Running with sudo](#running-with-sudo) section, or check [here](https://wiki.archlinux.org/title/Running_GUI_applications_as_root#Wayland) for a workaround.
+
+### `Segmentation fault` or `Trace/breakpoint trap` error in Linux when using a build from Releases or Github CI
+This can be related to `libglib` conflict beetween this found in Ubuntu 18.04 LTS (used by GitHub CI) and those found in newer distributions (most notably in Arch Linux). This error happens only(?) in GNOME, as in updated Arch Linux with XFCE installed, Sonix Flasher works without a problem. For users affected by this, the only solution is to compile a program by themself's, so they could compile against libraries in there systems. Refer to [Compiling](#compiling) section to fix this. For those interested in fixing this bug, I provide a traceback from gdb: 
