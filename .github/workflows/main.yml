@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: Install dependencies
-      run: sudo apt-get install libusb-1.0-0-dev libudev-dev
+      run: sudo apt-get install qtbase5-dev libxcomposite-dev libxkbcommon-x11-dev libusb-1.0-0-dev libudev-dev
 
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v1
@@ -29,6 +29,8 @@ jobs:
       run: |
         source venv/bin/activate
         pyinstaller sonix-flasher.spec
+        chmod +x .github/workflows/clean-libraries.sh
+        .github/workflows/clean-libraries.sh
         cd dist
         tar cfJ flasher-linux.tar.xz "sonix-flasher"
 
@@ -56,8 +58,8 @@ jobs:
     - name: Build
       run: |
         source venv/bin/activate
-        pyinstaller sonix-flasher.spec
-        hdiutil create -volname "sonix-flasher" -srcfolder "dist/sonix-flasher.app" -ov -format UDZO flasher-mac.dmg
+        pyinstaller --onefile -n "sonix-flasher" --windowed src/sonix-flasher/main.py
+        hdiutil create -volname "sonix-flasher" -srcfolder "dist/" -ov -format UDZO flasher-mac.dmg
 
     - uses: actions/upload-artifact@v1
       with:
