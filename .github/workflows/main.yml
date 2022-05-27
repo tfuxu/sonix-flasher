@@ -29,6 +29,7 @@ jobs:
       run: |
         source venv/bin/activate
         pyinstaller sonix-flasher.spec
+        chmod +x .github/workflows/clean-libraries.sh
         .github/workflows/clean-libraries.sh
         cd dist
         tar cfJ flasher-linux.tar.xz "sonix-flasher"
